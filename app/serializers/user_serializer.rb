@@ -67,6 +67,7 @@ class UserSerializer < BasicUserSerializer
              :pending_count,
              :profile_view_count,
              :time_read,
+             :recent_time_read,
              :primary_group_name,
              :primary_group_flair_url,
              :primary_group_flair_bg_color,
@@ -404,6 +405,13 @@ class UserSerializer < BasicUserSerializer
 
   def time_read
     AgeWords.age_words(object.user_stat&.time_read)
+  end
+
+  def recent_time_read
+    sum = object.created_at < 60.days.ago ?
+      UserVisit.where(user_id: object.id).where('visited_at >= ?', 60.days.ago).sum(:time_read) :
+      object.user_stat&.time_read
+    sum == 0 ? 0 : AgeWords.age_words(sum)
   end
 
 end

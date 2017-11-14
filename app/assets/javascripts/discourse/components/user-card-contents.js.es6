@@ -87,6 +87,11 @@ export default Ember.Component.extend(CleansUp, {
     $this.css('background-image', bg);
   },
 
+  @computed('user.time_read', 'user.recent_time_read')
+  show_recent_time_read(time_read, recent_time_read) {
+    return time_read !== recent_time_read && recent_time_read !== 0;
+  },
+
   _show(username, $target) {
     // No user card for anon
     if (this.siteSettings.hide_user_profiles_from_public && !this.currentUser) {
